@@ -1,0 +1,33 @@
+
+###> symfony/framework-bundle ###
+/.env
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> jetbrains/ide ###
+/.idea
+###< jetbrains/ide ###
+
+###> docker-compose ###
+/docker-compose.override.yml
+###< docker-compose ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> phpcs ###
+/phpcs.xml
+.phpcs-cache
+###< phpcs ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

@@ -1,0 +1,169 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: weather-checker
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /login:
+    post:
+      summary: Get authentication JWT token
+      tags:
+        - login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  description: user email
+                  type: string
+                  example: test@test.pl
+                password:
+                  type: string
+                  example: secret
+      responses:
+        '200':
+          description: Return JWT token of logged on user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: 983w5709475uewf8ej84jf498f498jf844fj98e4jyg48f4e98f...
+        '401':
+          description: Unauthorized attempt.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+  /pogoda/{station}:
+    parameters:
+      - name: station
+        in: path
+        required: true
+        description: Polish city for which the reading will be taken
+        schema:
+          $ref: '#/components/schemas/StationProperty'
+    get:
+      summary: Get weather data by given station.
+      tags:
+        - weather
+      responses:
+        '200':
+          description: Fetched weather data for given station.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessWeatherResponse'
+        '401':
+          description: Unauthorized attempt.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '404':
+          description: Cannot find report for given params.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherNotFound'
+  /pogoda/{station}/full:
+    parameters:
+      - name: station
+        in: path
+        required: true
+        description: Polish city for which the reading will be taken
+        schema:
+          $ref: '#/components/schemas/StationProperty'
+    get:
+      summary: Get weather data by given station.
+      tags:
+        - weather
+      responses:
+        '200':
+          description: Fetched weather data for given station.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessExtendedWeatherResponse'
+        '401':
+          description: Unauthorized attempt.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidCredentials'
+        '404':
+          description: Cannot find report for given params.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherNotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    StationProperty:
+      type: string
+      pattern: '[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+'
+      example: Warszawa
+    SuccessWeatherResponse:
+      type: object
+      properties:
+        station:
+          $ref: '#/components/schemas/StationProperty'
+        data_pomiaru:
+          type: string
+          example: '2023-03-23 14:00:00'
+        temperatura:
+          type: number
+          example: 1.1
+    SuccessExtendedWeatherResponse:
+      type: object
+      properties:
+        id_stacji:
+          type: integer
+          example: 1
+        stacja:
+          $ref: '#/components/schemas/StationProperty'
+        data_pomiaru:
+          type: string
+          example: '2023-03-23 14:00:00'
+        predkosc_wiatru:
+          type: integer
+          example: 1
+        kierunek_wiatru:
+          type: integer
+          example: 4
+        wilgotnosc_wzgledna:
+          type: number
+          example: 1.1
+        suma_opadu:
+          type: number
+          example: 1.1
+        cisnienie:
+          type: number
+          example: 1.1
+    WeatherNotFound:
+      type: object
+      example: '{"error":"Something went wrong while trying to get weather data. Cannot fetch data for given station: [test], error: [Station could not be found]"}'
+    InvalidCredentials:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: Invalid credentials
+security:
+  - bearerAuth: [ ]
+tags:
+  - name: login
+  - name: weather

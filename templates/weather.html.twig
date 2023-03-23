@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>{% block title %}Weather Checker{% endblock %}</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
+    </head>
+    <body>
+        {% block body %}
+            {% for message in app.flashes('error') %}
+                <div class="container">
+                    <div class="alert alert-danger mt-4" role="alert">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="container">
+                <div class="card col-md-12 mt-4">
+                    {% if reading is not null %}
+                    <div class="card-body row">
+                        <div class="col-md-6">
+                            <div class="row">Stacja:&nbsp; <b>{{ reading.station | capitalize }}</b></div>
+                            <div class="row mt-2">Data pomiaru:&nbsp; <b>{{ reading.date | date('Y-m-d H:i:s') }}</b></div>
+                            <div class="row mt-2">Temp (℃):&nbsp; <b>{{ reading.temp }}</b></div>
+                        </div>
+                    </div>
+                    {% else %}
+                        <div class="card-body row">
+                            Brak danych dla stacji:&nbsp; <b>{{ station | capitalize }}</b>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endblock %}
+    </body>
+</html>
